@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "nft1": {
+      "main": "src/nft1/main.mo",
+      "type": "motoko"
+    },
+    "nft1_assets": {
+      "dependencies": [
+        "nft1"
+      ],
+      "frontend": {
+        "entrypoint": "src/nft1_assets/src/index.html"
+      },
+      "source": [
+        "src/nft1_assets/assets",
+        "dist/nft1_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.8.4",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
