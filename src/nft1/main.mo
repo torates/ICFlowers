@@ -6,9 +6,14 @@ ERC721 - note the following:
 -Memo is ignored
 -No transferFrom (as transfer includes a from field)
 */
+
 import Cycles "mo:base/ExperimentalCycles";
 import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
+import Int8 "mo:base/Int8";
+import Buffer "mo:base/Buffer";
+import Text "mo:base/Text";
+import Blob "mo:base/Blob";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import AID "../motoko/util/AccountIdentifier";
@@ -16,6 +21,32 @@ import ExtCore "../motoko/ext/Core";
 import ExtCommon "../motoko/ext/Common";
 import ExtAllowance "../motoko/ext/Allowance";
 import ExtNonFungible "../motoko/ext/NonFungible";
+
+import AssetStorage "assetstorage";
+
+////import AccountIdentifier "mo:principal/AccountIdentifier";
+////import Cap "mo:cap/Cap";
+////import CapRouter "mo:cap/Router";
+////import EXT "mo:ext/Ext";
+
+//import Admins "../Admins";
+//import AssetTypes "../Assets/types";
+//import Assets "../Assets";
+//import Entrepot "../Entrepot";
+//import EntrepotTypes "../Entrepot/types";
+//import Ext "../Ext";
+//import ExtTypes "../Ext/types";
+//import Hex "../NNS/Hex";
+//import Http "../Http";
+//import HttpTypes "../Http/types";
+//import NNS "../NNS";
+//import NNSTypes "../NNS/types";
+//import Payouts "../Payouts";
+//import PayoutsTypes "../Payouts/types";
+//import PublicSale "../PublicSale";
+//import PublicSaleTypes "../PublicSale/types";
+//import TokenTypes "../Tokens/types";
+//import Tokens "../Tokens";
 
 shared (install) actor class erc721_token(init_minter: Principal) = this {
   
@@ -38,6 +69,8 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
   type MintRequest  = ExtNonFungible.MintRequest ;
   
   private let EXTENSIONS : [Extension] = ["@ext/common", "@ext/allowance", "@ext/nonfungible"];
+
+
   
   //State work
   private stable var _registryState : [(TokenIndex, AccountIdentifier)] = [];
@@ -50,9 +83,10 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
   private var _tokenMetadata : HashMap.HashMap<TokenIndex, Metadata> = HashMap.fromIter(_tokenMetadataState.vals(), 0, ExtCore.TokenIndex.equal, ExtCore.TokenIndex.hash);
   
   private stable var _supply : Balance  = 0;
+  private stable var maxSupply : Nat = 3000;
   private stable var _minter : Principal  = init_minter;
   private stable var _nextTokenId : TokenIndex  = 0;
-
+  private var value = 0;
 
   //State functions
   system func preupgrade() {
@@ -70,6 +104,22 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
 		assert(msg.caller == _minter);
 		_minter := minter;
 	};
+
+
+  public func inc() : async Nat {
+    value += 1;
+    return value;
+  };
+
+  public func toBytes(_id: Text) : async Blob {
+      return Text.encodeUtf8(_id);
+  };
+ 
+  public func tokenIdentifier(c : Text, i : TokenIndex) : async TokenIdentifier {
+    return ExtCore.TokenIdentifier.fromText(c, i);
+  };
+
+  
 	
   public shared(msg) func mintNFT(request : MintRequest) : async TokenIndex {
 		assert(msg.caller == _minter);
@@ -84,7 +134,8 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
 		_nextTokenId := _nextTokenId + 1;
     token;
 	};
-  
+
+
   public shared(msg) func transfer(request: TransferRequest) : async TransferResponse {
     if (request.amount != 1) {
 			return #err(#Other("Must use amount of 1"));
@@ -144,9 +195,6 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
     };
   };
 
-  public query func getMinter() : async Principal {
-    _minter;
-  };
   public query func extensions() : async [Extension] {
     EXTENSIONS;
   };
@@ -229,6 +277,8 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
   public query func getTokens() : async [(TokenIndex, Metadata)] {
     Iter.toArray(_tokenMetadata.entries());
   };
+
+  
   
   public query func metadata(token : TokenIdentifier) : async Result.Result<Metadata, CommonError> {
     if (ExtCore.TokenIdentifier.isPrincipal(token, Principal.fromActor(this)) == false) {
@@ -244,6 +294,29 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
       };
     };
   };
+
+  public query func http_request(request : HttpRequest) : async HttpResponse {
+    let path = Iter.toArray(Text.tokens(request.url, #text("/")));
+    switch(_getTokenData(_getParam(request.url, "tokenid"))) {
+      case (?metadata) {
+        return {
+          status_code = 200;
+          headers = [("content-type", "image/jpeg")];
+          body = metadata
+        }
+      };
+      case (_) {
+        return {
+          status_code = 200;
+          headers = [("content-type", "text/plain")];
+          body = Text.encodeUtf8 (
+            "Cycle Balance:                            ~" # debug_show (Cycles.balance()/1000000000000) # "T\n" #
+            "Wrapped NFTs:                             " # debug_show (_registry.size()) # "\n" #
+          )
+        };
+      };
+    };
+  };
   
   //Internal cycle management - good general case
   public func acceptCycles() : async () {
@@ -255,3 +328,6 @@ shared (install) actor class erc721_token(init_minter: Principal) = this {
     return Cycles.balance();
   };
 }
+
+
+// possibble solution, premint 3k icflower nfts, to an address
