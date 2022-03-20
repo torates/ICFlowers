@@ -6,8 +6,11 @@ type erc721_token =
    availableCycles: () -> (nat) query;
    balance: (BalanceRequest) -> (BalanceResponse) query;
    bearer: (TokenIdentifier__1) -> (Result_2) query;
+<<<<<<< HEAD
    check_license_status: () -> (bool) query;
    create_invoice: () -> (CreateInvoiceResult);
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
    extensions: () -> (vec Extension) query;
    getAllowances: () -> (vec record {
                                TokenIndex;
@@ -15,24 +18,35 @@ type erc721_token =
                              }) query;
    getRegistry: () -> (vec record {
                              TokenIndex;
+<<<<<<< HEAD
                              AccountIdentifier__2;
+=======
+                             AccountIdentifier__1;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
                            }) query;
    getTokens: () -> (vec record {
                            TokenIndex;
                            Metadata;
                          }) query;
+<<<<<<< HEAD
    getTrait: (vec int) -> (vec int8);
    get_invoice: () -> (opt Invoice) query;
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
    http_request: (HttpRequest) -> (HttpResponse) query;
    inc: () -> (nat);
    metadata: (TokenIdentifier__1) -> (Result_1) query;
    mintNFT: (MintRequest) -> (TokenIndex);
+<<<<<<< HEAD
    remaining_cycles: () -> (nat) query;
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
    setMinter: (principal) -> ();
    supply: (TokenIdentifier__1) -> (Result) query;
    toBytes: (text) -> (blob);
    tokenIdentifier: (text, TokenIndex) -> (TokenIdentifier__1);
    transfer: (TransferRequest) -> (TransferResponse);
+<<<<<<< HEAD
    verify_invoice: () -> (VerifyInvoiceResult);
  };
 type VerifyInvoiceSuccess = 
@@ -64,18 +78,32 @@ type VerifyInvoiceErr =
 type User = 
  variant {
    address: AccountIdentifier__1;
+=======
+ };
+type User = 
+ variant {
+   address: AccountIdentifier;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
    "principal": principal;
  };
 type TransferResponse = 
  variant {
    err:
     variant {
+<<<<<<< HEAD
       CannotNotify: AccountIdentifier__1;
+=======
+      CannotNotify: AccountIdentifier;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
       InsufficientBalance;
       InvalidToken: TokenIdentifier;
       Other: text;
       Rejected;
+<<<<<<< HEAD
       Unauthorized: AccountIdentifier__1;
+=======
+      Unauthorized: AccountIdentifier;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
     };
    ok: Balance;
  };
@@ -89,12 +117,15 @@ type TransferRequest =
    to: User;
    token: TokenIdentifier;
  };
+<<<<<<< HEAD
 type TokenVerbose = 
  record {
    decimals: int;
    meta: opt record {Issuer: text;};
    symbol: text;
  };
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 type TokenIndex = nat32;
 type TokenIdentifier__1 = text;
 type TokenIdentifier = text;
@@ -122,7 +153,11 @@ type StreamingCallbackHttpResponse =
 type Result_2 = 
  variant {
    err: CommonError;
+<<<<<<< HEAD
    ok: AccountIdentifier__2;
+=======
+   ok: AccountIdentifier__1;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
  };
 type Result_1 = 
  variant {
@@ -134,11 +169,14 @@ type Result =
    err: CommonError;
    ok: Balance__1;
  };
+<<<<<<< HEAD
 type Permissions = 
  record {
    canGet: vec principal;
    canVerify: vec principal;
  };
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 type MintRequest = 
  record {
    metadata: opt blob;
@@ -156,6 +194,7 @@ type Metadata =
    nonfungible: record {metadata: opt blob;};
  };
 type Memo = blob;
+<<<<<<< HEAD
 type Invoice = 
  record {
    amount: nat;
@@ -170,6 +209,8 @@ type Invoice =
    token: TokenVerbose;
    verifiedAtTime: opt int;
  };
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 type HttpResponse = 
  record {
    body: vec nat8;
@@ -190,6 +231,7 @@ type HeaderField =
    text;
  };
 type Extension = text;
+<<<<<<< HEAD
 type Details = 
  record {
    description: text;
@@ -213,6 +255,8 @@ type CreateInvoiceErr =
     };
    message: opt text;
  };
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 type CommonError__1 = 
  variant {
    InvalidToken: TokenIdentifier;
@@ -248,6 +292,7 @@ type AllowanceRequest =
    spender: principal;
    token: TokenIdentifier;
  };
+<<<<<<< HEAD
 type AccountIdentifier__2 = text;
 type AccountIdentifier__1 = text;
 type AccountIdentifier = 
@@ -256,4 +301,8 @@ type AccountIdentifier =
    "principal": principal;
    "text": text;
  };
+=======
+type AccountIdentifier__1 = text;
+type AccountIdentifier = text;
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 service : (principal) -> erc721_token

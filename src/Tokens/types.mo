@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Ext "mo:ext/Ext";
 
 import Cap "mo:cap/Cap";
@@ -39,4 +40,47 @@ module {
         txId       : Text;
     };
 
+=======
+import Ext "mo:ext/Ext";
+
+import Cap "mo:cap/Cap";
+
+import Admins "../Admins";
+import Assets "../Assets";
+
+
+module {
+
+    public type LocalStableState = {
+        tokens      : [?Token];
+        metadata    : [Metadata];
+        isShuffled  : Bool;
+    };
+
+    public type State = {
+        _Admins     : Admins.Admins;
+        _Assets     : Assets.Assets;
+        _Cap        : Cap.Cap;
+        tokens      : [?Token];
+        metadata    : [Metadata];
+        isShuffled  : Bool;
+        supply      : Nat16;
+        cid         : Principal;
+    };
+
+    public type Metadata = {
+        back    : Text;
+        border  : Text;
+        ink     : Text;
+    };
+
+    public type TokenIndex = Nat32;
+
+    public type Token = {
+        createdAt  : Int;
+        owner      : Ext.AccountIdentifier;
+        txId       : Text;
+    };
+
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
 };

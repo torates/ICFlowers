@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "invoice": {
     "ic": "66jne-oqaaa-aaaah-abdcq-cai"
   },
@@ -10,5 +11,12 @@
   },
   "large_canister_deployer": {
     "ic": "faqu3-miaaa-aaaah-abbqa-cai"
+=======
+  "nft1": {
+    "ic": "ahos3-5yaaa-aaaah-abbna-cai"
+  },
+  "nft1_assets": {
+    "ic": "aapup-qaaaa-aaaah-abbnq-cai"
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
   }
 }

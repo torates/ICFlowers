@@ -1,9 +1,16 @@
 export const idlFactory = ({ IDL }) => {
   const TokenIdentifier = IDL.Text;
+<<<<<<< HEAD
   const AccountIdentifier__1 = IDL.Text;
   const User = IDL.Variant({
     'principal' : IDL.Principal,
     'address' : AccountIdentifier__1,
+=======
+  const AccountIdentifier = IDL.Text;
+  const User = IDL.Variant({
+    'principal' : IDL.Principal,
+    'address' : AccountIdentifier,
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
   });
   const AllowanceRequest = IDL.Record({
     'token' : TokenIdentifier,
@@ -37,6 +44,7 @@ export const idlFactory = ({ IDL }) => {
     'err' : CommonError__1,
   });
   const TokenIdentifier__1 = IDL.Text;
+<<<<<<< HEAD
   const AccountIdentifier__2 = IDL.Text;
   const Result_2 = IDL.Variant({
     'ok' : AccountIdentifier__2,
@@ -88,6 +96,13 @@ export const idlFactory = ({ IDL }) => {
     'ok' : CreateInvoiceSuccess,
     'err' : CreateInvoiceErr,
   });
+=======
+  const AccountIdentifier__1 = IDL.Text;
+  const Result_2 = IDL.Variant({
+    'ok' : AccountIdentifier__1,
+    'err' : CommonError,
+  });
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
   const Extension = IDL.Text;
   const TokenIndex = IDL.Nat32;
   const Metadata = IDL.Variant({
@@ -150,6 +165,7 @@ export const idlFactory = ({ IDL }) => {
   const TransferResponse = IDL.Variant({
     'ok' : Balance,
     'err' : IDL.Variant({
+<<<<<<< HEAD
       'CannotNotify' : AccountIdentifier__1,
       'InsufficientBalance' : IDL.Null,
       'InvalidToken' : TokenIdentifier,
@@ -180,6 +196,16 @@ export const idlFactory = ({ IDL }) => {
     'ok' : VerifyInvoiceSuccess,
     'err' : VerifyInvoiceErr,
   });
+=======
+      'CannotNotify' : AccountIdentifier,
+      'InsufficientBalance' : IDL.Null,
+      'InvalidToken' : TokenIdentifier,
+      'Rejected' : IDL.Null,
+      'Unauthorized' : AccountIdentifier,
+      'Other' : IDL.Text,
+    }),
+  });
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
   const erc721_token = IDL.Service({
     'acceptCycles' : IDL.Func([], [], []),
     'allowance' : IDL.Func([AllowanceRequest], [Result], ['query']),
@@ -187,8 +213,11 @@ export const idlFactory = ({ IDL }) => {
     'availableCycles' : IDL.Func([], [IDL.Nat], ['query']),
     'balance' : IDL.Func([BalanceRequest], [BalanceResponse], ['query']),
     'bearer' : IDL.Func([TokenIdentifier__1], [Result_2], ['query']),
+<<<<<<< HEAD
     'check_license_status' : IDL.Func([], [IDL.Bool], ['query']),
     'create_invoice' : IDL.Func([], [CreateInvoiceResult], []),
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
     'extensions' : IDL.Func([], [IDL.Vec(Extension)], ['query']),
     'getAllowances' : IDL.Func(
         [],
@@ -197,7 +226,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getRegistry' : IDL.Func(
         [],
+<<<<<<< HEAD
         [IDL.Vec(IDL.Tuple(TokenIndex, AccountIdentifier__2))],
+=======
+        [IDL.Vec(IDL.Tuple(TokenIndex, AccountIdentifier__1))],
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
         ['query'],
       ),
     'getTokens' : IDL.Func(
@@ -205,13 +238,19 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(TokenIndex, Metadata))],
         ['query'],
       ),
+<<<<<<< HEAD
     'getTrait' : IDL.Func([IDL.Vec(IDL.Int)], [IDL.Vec(IDL.Int8)], []),
     'get_invoice' : IDL.Func([], [IDL.Opt(Invoice)], ['query']),
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
     'http_request' : IDL.Func([HttpRequest], [HttpResponse], ['query']),
     'inc' : IDL.Func([], [IDL.Nat], []),
     'metadata' : IDL.Func([TokenIdentifier__1], [Result_1], ['query']),
     'mintNFT' : IDL.Func([MintRequest], [TokenIndex], []),
+<<<<<<< HEAD
     'remaining_cycles' : IDL.Func([], [IDL.Nat], ['query']),
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
     'setMinter' : IDL.Func([IDL.Principal], [], []),
     'supply' : IDL.Func([TokenIdentifier__1], [Result], ['query']),
     'toBytes' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Nat8)], []),
@@ -221,7 +260,10 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'transfer' : IDL.Func([TransferRequest], [TransferResponse], []),
+<<<<<<< HEAD
     'verify_invoice' : IDL.Func([], [VerifyInvoiceResult], []),
+=======
+>>>>>>> 0838e5d3e009742de0a1933affcdd17062508450
   });
   return erc721_token;
 };
