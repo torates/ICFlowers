@@ -25,7 +25,6 @@ import AssetStorage "assetstorage";
 import SVG "SVG";
 import Traits "Traits";
 import Array "mo:base/Array";
-import WICP "../invoice/WICP";
 
 import Invoice "canister:invoice";
 ////import AccountIdentifier "mo:principal/AccountIdentifier";
@@ -52,10 +51,9 @@ import Invoice "canister:invoice";
 //import TokenTypes "../Tokens/types";
 //import Tokens "../Tokens";
 
-shared (install) actor class erc721_token(init_minter: Principal, wicpCanisterId_: Principal) = this {
+shared (install) actor class erc721_token(init_minter: Principal) = this {
   
   // Types
-  type WICPActor = WICP.WICPActor;
   type AccountIdentifier = ExtCore.AccountIdentifier;
   type SubAccount = ExtCore.SubAccount;
   type User = ExtCore.User;
@@ -71,7 +69,8 @@ shared (install) actor class erc721_token(init_minter: Principal, wicpCanisterId
   type AllowanceRequest = ExtAllowance.AllowanceRequest;
   type ApproveRequest = ExtAllowance.ApproveRequest;
   type Metadata = ExtCommon.Metadata;
-  type MintRequest  = ExtNonFungible.MintRequest ;
+  type MintRequest  = ExtNonFungible.MintRequest;
+  type Permissions = Invoice.Permissions;
   
   private let EXTENSIONS : [Extension] = ["@ext/common", "@ext/allowance", "@ext/nonfungible"];
 
@@ -92,12 +91,6 @@ shared (install) actor class erc721_token(init_minter: Principal, wicpCanisterId
   private stable var _minter : Principal  = init_minter;
   private stable var _nextTokenId : TokenIndex  = 0;
   private var value = 0;
-
-  public func returnWICPid() : async Principal {
-    Invoice.wicpCanisterId_ := wicpCanisterId_;
-    return wicpCanisterId_;
-  };
-  returnWICPid();
 
   //State functions
   system func preupgrade() {
@@ -436,15 +429,16 @@ shared (install) actor class erc721_token(init_minter: Principal, wicpCanisterId
 
 // #region create_invoice
   public shared ({caller}) func create_invoice() : async Invoice.CreateInvoiceResult {
+/*     let permissionz : ?Permissions = {
+      canGet = [caller];
+      canVerify = [caller];
+    }; */
     let invoiceCreateArgs : Invoice.CreateInvoiceArgs = {
       amount = ONE_ICP_IN_E8S / 10;
       token = {
         symbol = "ICP";
       };
-      permissions = {
-        canGet = [caller];
-        canVerify = [caller];
-      };
+      permissions = null;
       details = ?{
         description = "Example license certifying status";
         // JSON string as a blob

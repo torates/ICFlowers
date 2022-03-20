@@ -1,5 +1,4 @@
-import Invoice     "main";
-import WICP "WICP";
+import Ledger     "canister:ledger";
 
 import A          "./Account";
 import CRC32      "./CRC32";
@@ -16,9 +15,6 @@ import Result     "mo:base/Result";
 import Time       "mo:base/Time";
 
 module {
-
-  type WICPActor = WICP.WICPActor;
-  private stable let WICPCanisterActor: WICPActor = actor(Principal.toText(Invoice.returnWICP()));
   public type Memo = Nat64;
 
   public type Tokens = {
@@ -66,26 +62,46 @@ module {
 
   public type TransferResult = Result.Result<T.TransferSuccess, TransferError>;
 
-  public func transfer (to : Principal, n : Nat) : async TransferResult {
-    let result = await WICP.transfer(to, n);
+  public func transfer (args : TransferArgs) : async TransferResult {
+    let result = await Ledger.transfer(args);
     switch result {
       case (#Ok index) {
         #ok({blockHeight = index});
       };
       case (#Err err) {
         switch err {
-          case (#LessThanFee kind) {
+          case (#BadFee kind) {
             let expected_fee = kind.expected_fee;
             #err({
               message = ?("Bad Fee. Expected fee of " # Nat64.toText(expected_fee.e8s) # " but got " # Nat64.toText(args.fee.e8s));
-              kind = #LessThanFee({expected_fee});
+              kind = #BadFee({expected_fee});
             });
           };
-          case (#InsufficientBalance kind) {
+          case (#InsufficientFunds kind) {
             let balance = kind.balance;
             #err({
               message = ?("Insufficient balance. Current balance is " # Nat64.toText(balance.e8s));
-              kind = #InsufficientBalance({balance});
+              kind = #InsufficientFunds({balance});
+            })
+          };
+          case (#TxTooOld kind) {
+            let allowed_window_nanos = kind.allowed_window_nanos;
+            #err({
+              message = ?("Error - Tx Too Old. Allowed window of " # Nat64.toText(allowed_window_nanos));
+              kind = #TxTooOld({allowed_window_nanos});
+            })
+          };
+          case (#TxCreatedInFuture) {
+            #err({
+              message = ?"Error - Tx Created In Future";
+              kind = #TxCreatedInFuture;
+            })
+          };
+          case (#TxDuplicate kind) {
+            let duplicate_of = kind.duplicate_of;
+            #err({
+              message = ?("Error - Duplicate transaction. Duplicate of " # Nat64.toText(duplicate_of));
+              kind = #TxDuplicate({duplicate_of});
             })
           };
         };
@@ -111,7 +127,7 @@ module {
       #Other;
     };
   };
-  public func balance(args : Principal) : async BalanceResult {
+  public func balance(args : AccountArgs) : async BalanceResult {
     switch (Hex.decode(args.account)) {
       case (#err err) {
         #err({
@@ -120,7 +136,7 @@ module {
         });
       };
       case (#ok account) {
-        let balance = await WICP.balanceOf({account = Blob.fromArray(account)});
+        let balance = await Ledger.account_balance({account = Blob.fromArray(account)});
         #ok({
           balance = Nat64.toNat(balance.e8s);
         });
@@ -198,7 +214,7 @@ module {
                   creator = i.creator;
                   details = i.details;
                   permissions = i.permissions;
-                  amount = i.amoun  t;
+                  amount = i.amount;
                   // update amountPaid
                   amountPaid = balance;
                   token = i.token;

@@ -1,0 +1,14 @@
+{
+  "invoice": {
+    "ic": "66jne-oqaaa-aaaah-abdcq-cai"
+  },
+  "ledger": {
+    "ic": "6xkgy-yyaaa-aaaah-abdda-cai"
+  },
+  "nft1": {
+    "ic": "a4lo6-haaaa-aaaah-abbpq-cai"
+  },
+  "large_canister_deployer": {
+    "ic": "faqu3-miaaa-aaaah-abbqa-cai"
+  }
+}

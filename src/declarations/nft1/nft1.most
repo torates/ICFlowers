@@ -1,0 +1,28 @@
+type AccountIdentifier/3 = AccountIdentifier/1;
+type Invoice =
+  {
+    amount : Nat;
+    amountPaid : Nat;
+    creator : Principal;
+    destination : AccountIdentifier/2;
+    details : ?Details;
+    expiration : Time/1;
+    id : Nat;
+    paid : Bool;
+    permissions : ?Permissions;
+    token : TokenVerbose;
+    verifiedAtTime : ?Time/1
+  };
+type Metadata/1 = Metadata;
+type TokenIndex/1 = TokenIndex;
+actor {
+  stable var _allowancesState : [(TokenIndex/1, Principal)];
+  stable var _minter : Principal;
+  stable var _nextTokenId : Nat32;
+  stable var _registryState : [(TokenIndex/1, AccountIdentifier/3)];
+  stable var _supply : Nat;
+  stable var _tokenMetadataState : [(TokenIndex/1, Metadata/1)];
+  stable var invoicesStable : [(Principal, Invoice)];
+  stable var licensesStable : [(Principal, Bool)];
+  stable var maxSupply : Nat
+};

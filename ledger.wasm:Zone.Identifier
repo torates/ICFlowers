@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/dfinity/invoice-canister/blob/main/src/ledger/ledger.wasm
+HostUrl=https://raw.githubusercontent.com/dfinity/invoice-canister/main/src/ledger/ledger.wasm

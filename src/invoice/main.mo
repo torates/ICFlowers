@@ -1,6 +1,5 @@
 import A          "./Account";
 import Hex        "./Hex";
-import WICP       "./WICP";
 import ICP        "./ICPLedger";
 import T          "./Types";
 import U          "./Utils";
@@ -20,7 +19,6 @@ import Time       "mo:base/Time";
 
 actor Invoice {
 // #region Types
-  type WICPActor = WICP.WICPActor;
   type Details = T.Details;
   type Token = T.Token;
   type TokenVerbose = T.TokenVerbose;
@@ -39,13 +37,6 @@ actor Invoice {
 */
 
 // #region State
-  stable var wicpCanisterId_ : Principal = "";
-  stable var WICPCanisterActor: WICPActor = actor(Principal.toText(wicpCanisterId_));
-
-  public func returnWICP() : async Principal {
-    return wicpCanisterId_;
-  };
-
   stable var invoiceCounter : Nat = 0;
   stable var entries : [(Nat, Invoice)] = [];
   let invoices : HashMap.HashMap<Nat, Invoice> = HashMap.fromIter(Iter.fromArray(entries), entries.size(), Nat.equal, Hash.hash);
@@ -103,9 +94,9 @@ actor Invoice {
 
   func getTokenVerbose(token : Token) : TokenVerbose {
     switch(token.symbol){
-      case ("WICP") {
+      case ("ICP") {
         {
-          symbol = "WICP";
+          symbol = "ICP";
           decimals = 8;
           meta = ?{
             Issuer = "e8s";
@@ -129,7 +120,7 @@ actor Invoice {
   func getDestinationAccountIdentifier (args : T.GetDestinationAccountIdentifierArgs) : T.GetDestinationAccountIdentifierResult {
     let token = args.token;
     switch (token.symbol) {
-      case "WICP" {
+      case "ICP" {
         let canisterId = Principal.fromActor(Invoice);
 
         let account = U.getICPAccountIdentifier({
@@ -195,12 +186,13 @@ actor Invoice {
     };
   };
 // #endregion
+
 // #region Get Balance
   public shared ({caller}) func get_balance (args : T.GetBalanceArgs) : async T.GetBalanceResult {
     let token = args.token;
     let canisterId = Principal.fromActor(Invoice);
     switch (token.symbol) {
-      case "WICP" {
+      case "ICP" {
         let defaultAccount = Hex.encode(
           Blob.toArray(
             U.getDefaultAccount({
@@ -209,7 +201,7 @@ actor Invoice {
             })
          )
         );
-        let balance = await WICPActor.balanceOf({account = defaultAccount});
+        let balance = await ICP.balance({account = defaultAccount});
         switch(balance) {
           case (#err err) {
             #err({
@@ -276,7 +268,7 @@ actor Invoice {
         };
 
         switch (i.token.symbol) {
-          case "WICP" {
+          case "ICP" {
             let result : T.VerifyInvoiceResult = await ICP.verifyInvoice({
               invoice = i;
               caller;
@@ -320,7 +312,7 @@ actor Invoice {
       };
       case (#ok destination) {
         switch (token.symbol) {
-          case "WICP" {
+          case "ICP" {
             let now = Nat64.fromIntWrap(Time.now());
 
             let transferResult = await ICP.transfer({
@@ -385,7 +377,7 @@ actor Invoice {
     let principal = args.principal;
     let canisterId = Principal.fromActor(Invoice);
     switch (token.symbol) {
-      case "WICP" {
+      case "ICP" {
         let subaccount = U.getDefaultAccount({principal; canisterId;});
         let hexEncoded = Hex.encode(
           Blob.toArray(subaccount)

@@ -1,0 +1,18 @@
+{
+  "name": "chunker_appender",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "@dfinity/agent": "^0.9.1",
+    "@dfinity/authentication": "^0.9.1",
+    "@dfinity/identity": "^0.9.1",
+    "@peculiar/webcrypto": "^1.1.7",
+    "@types/node-fetch": "^2.5.11",
+    "node-fetch": "^2.6.1"
+  }
+}
